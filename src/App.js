@@ -72,7 +72,10 @@ class App extends Component {
     this.playAudio = this.playAudio.bind(this);
   }
   playAudio(key) {
+    console.log(key[0]);
+
     const audio = document.getElementById(key);
+    console.log("audio = " + audio);
     audio.currentTime = 0;
     audio.play();
     const msg = this.state.drumKeys[this.findInDrumKeys(key)].message;
@@ -206,24 +209,27 @@ class DrumSet extends Component {
         <Screws />
         <div className="drum-set">
           {drumKeys.map(drum => (
-            <button
-              className="drum-pad"
-              key={drum.keyPressed}
-              id={drum.message}
-              onClick={this.props.handleClick}
-              value={drum.keyPressed}
-            >
-              <div>
-                <p className="buttonLetter">{drum.keyPressed}</p>
-                {/* <p className="keyMsg">{drum.message}</p> */}
-                <audio
-                  id={drum.keyPressed}
-                  className="clip"
-                  src={drum.sound}
-                  preload="true"
-                />
-              </div>
-            </button>
+            <div className="pad-container">
+              <button
+                className="drum-pad"
+                key={drum.keyPressed}
+                id={drum.message}
+                onClick={this.props.handleClick}
+                value={drum.keyPressed}
+              >
+                <div>
+                  <p className="buttonLetter">{drum.keyPressed}</p>
+
+                  <audio
+                    id={drum.keyPressed}
+                    className="clip"
+                    src={drum.sound}
+                    preload="true"
+                  />
+                </div>
+              </button>
+              <p className="keyMsg">{drum.message}</p>
+            </div>
           ))}
         </div>
         <Screws />
@@ -269,6 +275,59 @@ class Footer extends Component {
         </div>
 
         <p>© Christopher Albanese 2018</p>
+
+        <div className="photoCredits">
+          <p>
+            Woodgrain photo by{" "}
+            <a
+              href="https://unsplash.com/photos/8mDJ31rIg08?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              rawpixel
+            </a>{" "}
+            on{" "}
+            <a
+              href="https://unsplash.com/search/photos/woodgrain?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              Unsplash
+            </a>.
+          </p>
+
+          <p>
+            Background photo by{" "}
+            <a
+              href="https://unsplash.com/photos/oBb-Y26PJgg?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              Samuel Zeller
+            </a>{" "}
+            on{" "}
+            <a
+              href="https://unsplash.com/search/photos/texture?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              Unsplash
+            </a>.
+          </p>
+
+          <p>
+            Pad texture photo by{" "}
+            <a
+              href="https://unsplash.com/photos/fcZIyU-nbFE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              Nathan Anderson
+            </a>{" "}
+            on{" "}
+            <a
+              href="https://unsplash.com/search/photos/texture?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+              target="_blank"
+            >
+              Unsplash
+            </a>.
+          </p>
+        </div>
       </div>
     );
   }
