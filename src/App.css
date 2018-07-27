@@ -131,10 +131,11 @@
 }
 
 .keyMsg {
+  font-family: "Audiowide", cursive;
   align-self: center;
   position: absolute;
   margin-top: 30px;
-  font-size: 1em;
+  font-size: 0.9em;
 }
 
 .pad-container:before {
