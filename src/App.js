@@ -6,7 +6,7 @@ class App extends Component {
     super(props);
     this.state = {
       keyPressed: "",
-      message: "show message",
+      message: "",
       sound: "",
       showMessage: true,
       keyDown: false,
@@ -73,96 +73,27 @@ class App extends Component {
   }
   playAudio(key) {
     const audio = document.getElementById(key);
+    audio.currentTime = 0;
     audio.play();
+    const msg = this.state.drumKeys[this.findInDrumKeys(key)].message;
+    this.setState({ message: msg });
+  }
+
+  findInDrumKeys(keyID) {
+    let ind = "";
+    this.state.drumKeys.map((key, index) => {
+      if (key.keyPressed === keyID) {
+        ind = index;
+      }
+    });
+    return ind;
   }
 
   handleClick(event) {
     console.log(event.currentTarget.value, event.currentTarget);
     const keyID = event.currentTarget.value;
-    const audio = document.getElementById(keyID);
-
     this.setState({ showMessage: true });
     this.playAudio(keyID);
-    this.setState({ showMessage: true });
-    // var e = new Event("keydown");
-    // e.key = event.target.id;
-    // document.dispatchEvent(e);
-  }
-  onKeyDown(event) {
-    this.setState({
-      keyPressed: "",
-      message: "",
-      sound: "",
-      showMessage: true,
-      keyDown: false
-    });
-
-    switch (event.keyCode) {
-      case 81:
-        return this.setState({
-          keyPressed: "Q",
-          message: "Kick Drum",
-          sound:
-            "http://sampleswap.org/samples-ghost/%20MAY%202014%20LATEST%20ADDITIONS/DRUMS%20(FULL%20KITS)/Choosy%20House%20Kit/67[kb]choosy-house-Kick17.wav.mp3 "
-        });
-      case 87:
-        return this.setState({
-          keyPressed: "W",
-          message: " Space Kick",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUMS%20(FULL%20KITS)/Hip%20Hop%20Specialty%20Kit/296[kb]say-bow-beep.wav.mp3"
-        });
-      case 69:
-        return this.setState({
-          keyPressed: "E",
-          message: " E Clap",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUMS%20and%20SINGLE%20HITS/claps/13[kb]707_HCP.WAV.mp3"
-        });
-      case 65:
-        return this.setState({
-          keyPressed: "A",
-          message: " A Rim Shot",
-          sound: "http://s1download-universal-soundbank.com/wav/4392.wav"
-        });
-      case 83:
-        return this.setState({
-          keyPressed: "S",
-          message: " S High Hat",
-          sound:
-            "http://dight310.byu.edu/media/audio/FreeLoops.com/2/2/Dirty%20South%20Hihat%2001-3615-Free-Loops.com.mp3"
-        });
-      case 68:
-        return this.setState({
-          keyPressed: "D",
-          message: " D Crash",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUMS%20and%20SINGLE%20HITS/crashes/92[kb]909-bright-crash.aif.mp3"
-        });
-      case 90:
-        return this.setState({
-          keyPressed: "Z",
-          message: " Z Laser",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUMS%20(FULL%20KITS)/R2D2-droid/41[kb]R2D2-disappointment.aif.mp3"
-        });
-      case 88:
-        return this.setState({
-          keyPressed: "X",
-          message: " X R2D2",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUMS%20(FULL%20KITS)/R2D2-droid/52[kb]R2D2-datapath.aif.mp3"
-        });
-      case 67:
-        return this.setState({
-          keyPressed: "C",
-          message: " C Scratch",
-          sound:
-            "http://sampleswap.org/samples-ghost/DRUM%20LOOPS%20and%20BREAKS/turntables%20and%20scratching/48[kb]basic-scratch.aif.mp3"
-        });
-      default:
-        return console.log("some other key");
-    }
   }
 
   onKeyUp() {
@@ -172,6 +103,43 @@ class App extends Component {
     }, 750);
   }
 
+  onMouseUp() {
+    this.setState({ keyDown: false });
+    setTimeout(() => {
+      !this.state.keyDown && this.setState({ showMessage: false, message: "" });
+    }, 750);
+  }
+
+  onKeyDown(event) {
+    this.setState({
+      showMessage: true,
+      keyDown: false
+    });
+
+    switch (event.keyCode) {
+      case 81:
+        return this.playAudio("Q");
+      case 87:
+        return this.playAudio("W");
+      case 69:
+        return this.playAudio("E");
+      case 65:
+        return this.playAudio("A");
+      case 83:
+        return this.playAudio("S");
+      case 68:
+        return this.playAudio("D");
+      case 90:
+        return this.playAudio("Z");
+      case 88:
+        return this.playAudio("X");
+      case 67:
+        return this.playAudio("C");
+      default:
+        return console.log("some other key");
+    }
+  }
+
   componentDidMount() {
     window.addEventListener("keydown", event => {
       this.onKeyDown(event);
@@ -179,11 +147,15 @@ class App extends Component {
     window.addEventListener("keyup", event => {
       this.onKeyUp(event);
     });
+    window.addEventListener("mouseup", event => {
+      this.onMouseUp(event);
+    });
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown");
     window.removeEventListener("keyup");
+    window.removeEventListener("mouseup");
   }
   render() {
     return (
@@ -245,13 +217,11 @@ class DrumSet extends Component {
                 <p className="buttonLetter">{drum.keyPressed}</p>
                 {/* <p className="keyMsg">{drum.message}</p> */}
                 <audio
-                  autoPlay="true"
                   id={drum.keyPressed}
                   className="clip"
                   src={drum.sound}
-                >
-                  {/* <source src={drum.sound} /> */}
-                </audio>
+                  preload="true"
+                />
               </div>
             </button>
           ))}
@@ -263,33 +233,8 @@ class DrumSet extends Component {
 }
 
 class Display extends Component {
-  playSound(key) {
-    return (
-      // console.log("soundPlayed", key);
-      <audio controls autoPlay="true">
-        {/* console.log(object) */}
-        <source src="{key.drumKeys.sound}" />
-      </audio>
-    );
-  }
-
-  componentWillReceiveProps = nextProps => {
-    let fadeText = "notFaded";
-    //  console.log(nextProps);
-  };
-
   render() {
-    let keyPressed = this.props.keyPressed;
     let showMessage = this.props.showMessage;
-
-    let sound = (
-      <audio autoPlay="true">
-        {/* console.log(soundfile) */}
-        <source src={this.props.sound} />
-      </audio>
-    );
-
-    const padPressed = this.props.keyPressed;
     const soundPressed = this.props.message;
 
     return (
@@ -297,12 +242,10 @@ class Display extends Component {
         <Screws />
         <p className="label">FCC :|: DrumMachine :|:</p>
         <div id="display">
-          {/* <p className="display-text">{soundPressed}</p> */}
           {{ showMessage } && (
             <div className="display-text">{soundPressed}</div>
           )}
         </div>
-        {/* {keyPressed && <div> {sound}</div>} */}
         <Screws />
       </div>
     );
